@@ -1,53 +1,62 @@
-import axios from "axios";
 import quoteService from "./../quotes/quotes.service";
+import constants from "./../constants";
+const { quoteServiceUrl } = constants;
 
-const _getRandomNumber = (number) => {
-  return Math.floor(Math.random() * number);
-  
+const internalFunctions = {
+  /**
+   *
+   * @description function that takes in a number and returns a random integer
+   * @param {number} number
+   * @returns {integer}
+   */
+
+  _getRandomNumber: (number) => {
+    return Math.floor(Math.random() * number);
+  },
+  _calculateBlessings: (number, randomNumber1, randomNumber2) => {
+    let blessings = 1;
+
+    if (number < randomNumber1 && number < randomNumber2) blessings = 3;
+
+    if (number > randomNumber1 && number < randomNumber2) blessings = 10;
+
+    if (number > randomNumber1 && number > randomNumber2) blessings = 1;
+
+    return blessings;
+  },
 };
-let internalFunctions = {
-  _getRandomNumber,
-};
-
-const _calculateBlessings = async (number) => {
-  const random1 = internalFunctions._getRandomNumber(100);
-
-  const random2 = internalFunctions._getRandomNumber(100);
-
-  let blessing = 0;
-  console.log(number);
-  if (number > random1) blessings = 1;
-  console.log("random1");
-  console.log(random1);
-  console.log("random2");
-  console.log(random2);
-  if (number > random2) blessings = 3;
-  if (number > random1 && number < random2) blessings = 10;
-
-  return blessing;
-};
-
-internalFunctions._calculateBlessings = _calculateBlessings;
 
 const getBlessings = async (userEnteredNumber) => {
-  const numberOfBlessings = await internalFunctions._calculateBlessings(
-    userEnteredNumber
+  const randomNumber1 = internalFunctions._getRandomNumber(100);
+
+  const randomNumber2 = internalFunctions._getRandomNumber(100);
+
+  const numberOfBlessings = internalFunctions._calculateBlessings(
+    userEnteredNumber,
+    randomNumber1,
+    randomNumber2
   );
-  console.log(numberOfBlessings);
-  let quotes = await quoteService.getAllQutoes();
-  console.log(quotes);
-  const blessingObject = [];
 
-  for (i = 0; i < numberOfBlessings; i++) {
-    blessingObject.push(quotes[_getRandomNumber(quotes.length)]);
+  try {
+    let quotes = await quoteService.getAllQuote(quoteServiceUrl);
+    const blessingsObject = [];
+
+    for (let i = 0; i < numberOfBlessings; i++) {
+      blessingsObject.push(
+        quotes[internalFunctions._getRandomNumber(quotes.length)]
+      );
+    }
+
+    const resObject = {
+      message: `Here are your ${numberOfBlessings} blessings my child! `,
+      blessings: blessingsObject,
+    };
+
+    return resObject;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error while getting quotes", error);
   }
-
-  const resObject = {
-    message: `you are blessed my fiend. Here are your ${numberOfBlessings} `,
-    blessings: blessingsObject,
-  };
-
-  return resObject;
 };
 
-export default { getBlessings };
+export default { getBlessings, internalFunctions };

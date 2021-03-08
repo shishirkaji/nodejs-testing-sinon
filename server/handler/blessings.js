@@ -1,4 +1,3 @@
-import axios from "axios";
 import blessingService from "./../services/blessings/blessings.services";
 
 const blessingsHandler = async (req, res) => {
@@ -6,7 +5,6 @@ const blessingsHandler = async (req, res) => {
 
   const resObject = await blessingService.getBlessings(number);
 
-  console.log(number);
   res.status(200).send(resObject);
 };
 

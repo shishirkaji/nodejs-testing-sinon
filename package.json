@@ -4,14 +4,8 @@
   "description": "This is a code base for an article on medium showing how to properly stub functions in nodejs applications using sinon.",
   "main": "index.js",
   "scripts": {
-    "start": "node ./dist-server/app",
-    "dev": " npm run  build && npm run start ",
-    "build": "npm run clean && npm run transpile",
-    "transpile": "babel ./server --out-dir dist-server",
-    "clean": "rimraf dist-server",
-    "test": "mocha",
-    "watch:dev": "nodemon",
-    "nodemon": "npm run watch:dev"
+    "start": "nodemon --exec babel-node ./server/app.js",
+    "test": "mocha --require @babel/polyfill --require @babel/register server/**/__test__/*.test.js"
   },
   "nodemonConfig": {
     "exec": "npm run dev",
@@ -34,17 +28,16 @@
   "author": "shishirkshrestha",
   "license": "ISC",
   "dependencies": {
-    "@babel/cli": "^7.12.10",
-    "@babel/core": "^7.12.10",
-    "@babel/preset-env": "^7.12.11",
-    "@babel/runtime": "^7.12.5",
     "axios": "^0.21.1",
     "express": "^4.17.1",
-    "nodemon": "^2.0.7",
-    "rimraf": "^3.0.2"
+    "nodemon": "^2.0.7"
   },
   "devDependencies": {
-    "@babel/plugin-transform-runtime": "^7.12.10",
+    "@babel/core": "^7.12.10",
+    "@babel/node": "^7.12.10",
+    "@babel/polyfill": "^7.12.1",
+    "@babel/preset-env": "^7.12.11",
+    "@babel/register": "^7.13.8",
     "chai": "^4.2.0",
     "mocha": "^8.2.1",
     "sinon": "^9.2.4"

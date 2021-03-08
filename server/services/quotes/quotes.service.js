@@ -1,11 +1,9 @@
 import axios from "axios";
 
-const getAllQuotes = async () => {
-  const url = "https://type.fit/api/quotes";
-
+const getAllQuote = async (url) => {
   const result = await axios.get(url);
-  console.log('here')
+  
   return result.data;
 };
 
-export default { getAllQuotes };
+export default { getAllQuote };
