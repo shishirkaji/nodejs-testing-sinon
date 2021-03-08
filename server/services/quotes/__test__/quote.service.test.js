@@ -7,29 +7,31 @@ import quoteService from "../quotes.service";
 
 const { getAllQuote } = quoteService;
 describe("Quote Service", () => {
-  it("must be a function that takes in 1 parameter.", () => {
-    assert.lengthOf(getAllQuote, 1);
+  describe("gerAllQuote", () => {
+    it("must be a function that takes in 1 parameter.", () => {
+      assert.lengthOf(getAllQuote, 1);
 
-    assert.typeOf(getAllQuote, "function");
-  });
+      assert.typeOf(getAllQuote, "function");
+    });
 
-  it("must call axios.get function with given param", async () => {
-    // arrange
+    it("must call axios.get function with given param", async () => {
+      // arrange
 
-    const fakeUrl = "https://service.somefakeurl.com";
-    const fakeResponse = { data: "some fake data" };
+      const fakeUrl = "https://service.somefakeurl.com";
+      const fakeResponse = { data: "some fake data" };
 
-    const axiosGetStub = sinon.stub(axios, "get");
-    axiosGetStub.withArgs(fakeUrl).resolves(fakeResponse);
+      const axiosGetStub = sinon.stub(axios, "get");
+      axiosGetStub.withArgs(fakeUrl).resolves(fakeResponse);
 
-    // act
+      // act
 
-    const response = await getAllQuote(fakeUrl);
+      const response = await getAllQuote(fakeUrl);
 
-    //assert
+      //assert
 
-    sinon.assert.calledOnceWithExactly(axiosGetStub, fakeUrl);
+      sinon.assert.calledOnceWithExactly(axiosGetStub, fakeUrl);
 
-    assert.deepEqual(fakeResponse.data, response);
+      assert.deepEqual(fakeResponse.data, response);
+    });
   });
 });

@@ -3,8 +3,6 @@ import { assert } from "chai";
 
 import blessingService from "../blessings.services";
 import quoteService from "../../quotes/quotes.service";
-import constants from "../../constants";
-import { before, describe } from "mocha";
 
 const { internalFunctions, getBlessings } = blessingService;
 
@@ -12,10 +10,12 @@ describe("Blessings Service", () => {
   beforeEach(() => {
     sinon.stub(console, "log");
   });
+
   describe("Internal Function", () => {
     afterEach(() => {
       sinon.restore();
     });
+
     describe("_getRandomNumber", () => {
       it("must be a function that takes in 1 parameter", () => {
         assert.typeOf(internalFunctions._getRandomNumber, "function");
@@ -84,9 +84,10 @@ describe("Blessings Service", () => {
   describe("getBlessing", () => {
     // arrange
 
-    const fakeQuotes = ["fakeQuote1", "fakeQuote2", "fakeQuote3"];
+    const mockQuotes = ["fakeQuote1", "fakeQuote2", "fakeQuote3"];
     let _getRandomNumberStub;
     let getAllQuoteStub;
+    let _calculateBlessingsStub;
 
     beforeEach(() => {
       // arrange
@@ -97,9 +98,14 @@ describe("Blessings Service", () => {
       _getRandomNumberStub.onSecondCall().returns(20);
       _getRandomNumberStub.onThirdCall().returns(0);
 
+      // _getRandomNumberStub.onCall(3) although it is 4th call because the count starts from 0
+
+      _getRandomNumberStub.onCall(3).returns(1);
+      _getRandomNumberStub.onCall(4).returns(2);
+
       _calculateBlessingsStub = sinon
         .stub(internalFunctions, "_calculateBlessings")
-        .returns(1);
+        .returns(3);
 
       getAllQuoteStub = sinon.stub(quoteService, "getAllQuote");
     });
@@ -117,7 +123,7 @@ describe("Blessings Service", () => {
 
       let errorExits = false;
       try {
-        const blessings = await getBlessings(50);
+        await getBlessings(50);
       } catch (error) {
         assert.equal(error.message, "Error while getting quotes");
 
@@ -131,13 +137,12 @@ describe("Blessings Service", () => {
     it("must return expected object if there are no errors", async () => {
       // arrange
 
-      const mockBlessingObject = ["fake quote"];
-      getAllQuoteStub.resolves(mockBlessingObject);
+      getAllQuoteStub.resolves(mockQuotes);
       let errorExits = false;
 
       const expectedResult = {
-        message: `Here are your 1 blessings my child! `,
-        blessings: mockBlessingObject,
+        message: `Here are your 3 blessings my child! `,
+        blessings: mockQuotes,
       };
 
       // act
@@ -152,8 +157,6 @@ describe("Blessings Service", () => {
 
       assert.deepEqual(resObject, expectedResult);
       assert.isFalse(errorExits);
-
-      sinon.assert.calledThrice(_getRandomNumberStub);
     });
   });
 });

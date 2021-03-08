@@ -5,14 +5,24 @@ const { quoteServiceUrl } = constants;
 const internalFunctions = {
   /**
    *
-   * @description function that takes in a number and returns a random integer
+   * @description function that takes in a number and returns a random integer between 0 and provided param number
    * @param {number} number
-   * @returns {integer}
+   * @returns {integer} number
    */
 
   _getRandomNumber: (number) => {
     return Math.floor(Math.random() * number);
   },
+
+  /**
+   *
+   * @description function that takes in a number from req and two random numbers and returns how many blessings the person gets lucky with.
+   * @param {number} number
+   * @param {number} randomNumber1
+   * @param {number} randomNumber2
+   * @returns {integer} 1 | 3 |10
+   */
+
   _calculateBlessings: (number, randomNumber1, randomNumber2) => {
     let blessings = 1;
 
@@ -39,12 +49,14 @@ const getBlessings = async (userEnteredNumber) => {
 
   try {
     let quotes = await quoteService.getAllQuote(quoteServiceUrl);
+
     const blessingsObject = [];
 
     for (let i = 0; i < numberOfBlessings; i++) {
-      blessingsObject.push(
-        quotes[internalFunctions._getRandomNumber(quotes.length)]
+      const randomQuoteIndex = internalFunctions._getRandomNumber(
+        quotes.length
       );
+      blessingsObject.push(quotes[randomQuoteIndex]);
     }
 
     const resObject = {
